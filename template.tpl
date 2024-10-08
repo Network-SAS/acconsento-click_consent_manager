@@ -14,7 +14,11 @@ ___INFO___
   "version": 1,
   "securityGroups": [],
   "displayName": "Acconsento.click Consent Manager by netWork",
-  "categories": ["ANALYTICS", "MARKETING", "ADVERTISING"],
+  "categories": [
+    "ANALYTICS",
+    "MARKETING",
+    "ADVERTISING"
+  ],
   "brand": {
     "id": "brand_dummy",
     "displayName": "",
@@ -52,7 +56,7 @@ ___TEMPLATE_PARAMETERS___
           "name": "denied",
           "displayName": "Denied Consent Types",
           "simpleValueType": true,
-          "defaultValue": "ad_storage, ad_user_data, ad_personalization, analytics_storage, functionality_storage, personalization_storage, security_storage",
+          "defaultValue": "ad_storage, ad_user_data, ad_personalization, analytics_storage",
           "canBeEmptyString": false,
           "help": "List of consent types \u003cstrong\u003edenied by default\u003c/strong\u003e comma separated"
         },
@@ -87,7 +91,6 @@ ___SANDBOXED_JS_FOR_WEB_TEMPLATE___
 
 const log = require('logToConsole');
 const JSON = require('JSON');
-log('data =', data);
 const setDefaultConsentState = require('setDefaultConsentState');
 const updateConsentState = require('updateConsentState');
 const localStorage = require('localStorage');
@@ -107,34 +110,39 @@ const splitInput = (input) => {
 
 const parseCommandData = (settings) => {
   const granted = splitInput(settings.granted);
+  const denied = splitInput(settings.denied);
   const commandData = {};
   
   granted.forEach(entry => {
     commandData[entry] = 'granted';
   });
+  denied.forEach(entry => {
+    commandData[entry] = 'denied';
+  });
   return commandData;
 };
 
 const onUserConsent = (consent) => {
+  log('onUserConsent =', consent);
   const consentModeStates = {
     ad_storage: (consent.marketing === true) ? 'granted' : 'denied',
     ad_user_data: (consent.marketing === true) ? 'granted' : 'denied',
     ad_personalization: (consent.marketing === true) ? 'granted' : 'denied',
-    analytics_storage: consent.tracking === true ? 'granted' : 'denied',
-    functionality_storage: 'granted',
-    personalization_storage: consent.unknown === true || (consent.unknown === true && (consent.marketing === true || consent.tracking === true)) ? 'granted' : 'denied',
-    security_storage: 'granted',
+    analytics_storage: consent.tracking === true ? 'granted' : 'denied'
   };
   updateConsentState(consentModeStates);
 };
 
 const main = (data) => {
-  /*Optional settings using gtagSet */
-  gtagSet('ads_data_redaction', data.defaultSettings[0].ads_data_redaction);
-  gtagSet('url_passthrough', data.defaultSettings[0].url_passthrough);
+  /* Optional settings using gtagSet */
+  gtagSet({
+    'developer_id.dZTJkMz': true,
+    ads_data_redaction: data.defaultSettings[0].ads_data_redaction,
+    url_passthrough: data.defaultSettings[0].url_passthrough
+  });
+
   
-  // Set default consent state
-  log('setting default consent state');
+  /* Set default consent state */
   data.defaultSettings.forEach(settings => {
     const defaultData = parseCommandData(settings);
     defaultData.wait_for_update = 500;
@@ -162,16 +170,17 @@ const main = (data) => {
       if (elem === "analytics_storage") {
         defaultPreferences.tracking = true;
       }
-      if (elem === "ad_personalization" || elem === "personalization_storage"){
+      if (elem === "ad_personalization"){
         defaultPreferences.unknown = true;
       }
     });
     log('creating user consent cookie',JSON.stringify(defaultPreferences));
     localStorage.setItem('acconsento-preferences', JSON.stringify(defaultPreferences));
   }
-  /* Event listener to update preferences */
   
-  callInWindow('acconsentoPreferencesChanged', onUserConsent);
+  /* Event listener to update preferences */
+  callInWindow('preferencesChanged', onUserConsent);
+  
 };
 main(data);
 data.gtmOnSuccess();
@@ -236,7 +245,7 @@ ___WEB_PERMISSIONS___
                 "mapValue": [
                   {
                     "type": 1,
-                    "string": "acconsentoPreferencesChanged"
+                    "string": "preferencesChanged"
                   },
                   {
                     "type": 8,
@@ -281,6 +290,10 @@ ___WEB_PERMISSIONS___
               {
                 "type": 1,
                 "string": "url_passthrough"
+              },
+              {
+                "type": 1,
+                "string": "developer_id.dZTJkMz"
               }
             ]
           }
@@ -417,99 +430,6 @@ ___WEB_PERMISSIONS___
                   {
                     "type": 1,
                     "string": "analytics_storage"
-                  },
-                  {
-                    "type": 8,
-                    "boolean": false
-                  },
-                  {
-                    "type": 8,
-                    "boolean": true
-                  }
-                ]
-              },
-              {
-                "type": 3,
-                "mapKey": [
-                  {
-                    "type": 1,
-                    "string": "consentType"
-                  },
-                  {
-                    "type": 1,
-                    "string": "read"
-                  },
-                  {
-                    "type": 1,
-                    "string": "write"
-                  }
-                ],
-                "mapValue": [
-                  {
-                    "type": 1,
-                    "string": "personalization_storage"
-                  },
-                  {
-                    "type": 8,
-                    "boolean": false
-                  },
-                  {
-                    "type": 8,
-                    "boolean": true
-                  }
-                ]
-              },
-              {
-                "type": 3,
-                "mapKey": [
-                  {
-                    "type": 1,
-                    "string": "consentType"
-                  },
-                  {
-                    "type": 1,
-                    "string": "read"
-                  },
-                  {
-                    "type": 1,
-                    "string": "write"
-                  }
-                ],
-                "mapValue": [
-                  {
-                    "type": 1,
-                    "string": "functionality_storage"
-                  },
-                  {
-                    "type": 8,
-                    "boolean": false
-                  },
-                  {
-                    "type": 8,
-                    "boolean": true
-                  }
-                ]
-              },
-              {
-                "type": 3,
-                "mapKey": [
-                  {
-                    "type": 1,
-                    "string": "consentType"
-                  },
-                  {
-                    "type": 1,
-                    "string": "read"
-                  },
-                  {
-                    "type": 1,
-                    "string": "write"
-                  }
-                ],
-                "mapValue": [
-                  {
-                    "type": 1,
-                    "string": "security_storage"
                   },
                   {
                     "type": 8,

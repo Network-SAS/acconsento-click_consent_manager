@@ -1,5 +1,5 @@
 homepange: "https://shop.acconsento.click"
-documentation: "https://shop.acconsento.click/domande-faq"
+documentation: "https://shop.acconsento.click/help"
 versions:
   - sha: cced7d86e08b3b88933d9cd3793aeab360af9081
     changeNotes: changed template name
