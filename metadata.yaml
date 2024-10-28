@@ -1,5 +1,5 @@
 homepange: "https://shop.acconsento.click"
 documentation: "https://shop.acconsento.click/help"
 versions:
-  - sha: 0bf8282d88aebed2ec714ee218a0fc5f554f1cb0
-    changeNotes: updated template, removed logs, added default values to settings, removed optional consent types
+  - sha: 2db899ed55d0a8f008254af074abcac1ac2b0862
+    changeNotes: added optional conset types
