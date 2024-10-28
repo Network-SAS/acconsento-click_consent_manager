@@ -1,12 +1,4 @@
-﻿___TERMS_OF_SERVICE___
-
-By creating or modifying this file you agree to Google Tag Manager's Community
-Template Gallery Developer Terms of Service available at
-https://developers.google.com/tag-manager/gallery-tos (or such other URL as
-Google may provide), as modified from time to time.
-
-
-___INFO___
+﻿___INFO___
 
 {
   "type": "TAG",
@@ -46,7 +38,8 @@ ___TEMPLATE_PARAMETERS___
           "displayName": "Granted Consent Types",
           "simpleValueType": true,
           "canBeEmptyString": true,
-          "help": "List of consent types \u003cstrong\u003egranted by default\u003c/strong\u003e comma separated"
+          "help": "List of consent types \u003cstrong\u003egranted by default\u003c/strong\u003e comma separated",
+          "defaultValue": "functionality_storage, security_storage"
         },
         "isUnique": false
       },
@@ -56,7 +49,7 @@ ___TEMPLATE_PARAMETERS___
           "name": "denied",
           "displayName": "Denied Consent Types",
           "simpleValueType": true,
-          "defaultValue": "ad_storage, ad_user_data, ad_personalization, analytics_storage",
+          "defaultValue": "ad_storage, ad_user_data, ad_personalization, analytics_storage, personalization_storage",
           "canBeEmptyString": false,
           "help": "List of consent types \u003cstrong\u003edenied by default\u003c/strong\u003e comma separated"
         },
@@ -91,6 +84,7 @@ ___SANDBOXED_JS_FOR_WEB_TEMPLATE___
 
 const log = require('logToConsole');
 const JSON = require('JSON');
+// log('data =', data);
 const setDefaultConsentState = require('setDefaultConsentState');
 const updateConsentState = require('updateConsentState');
 const localStorage = require('localStorage');
@@ -99,8 +93,7 @@ const gtagSet = require('gtagSet');
 const COOKIE_NAME = 'acconsento-preferences';
 
 /*
- *   Splits the input string using comma as a delimiter, returning an array of
- *   strings
+ *   Splits the input string using comma as a delimiter, returning an array of strings
  */
 const splitInput = (input) => {
   return input.split(',')
@@ -112,6 +105,9 @@ const parseCommandData = (settings) => {
   const granted = splitInput(settings.granted);
   const denied = splitInput(settings.denied);
   const commandData = {};
+  
+//  log('granted =', granted);
+//  log('denied =', denied);
   
   granted.forEach(entry => {
     commandData[entry] = 'granted';
@@ -128,8 +124,12 @@ const onUserConsent = (consent) => {
     ad_storage: (consent.marketing === true) ? 'granted' : 'denied',
     ad_user_data: (consent.marketing === true) ? 'granted' : 'denied',
     ad_personalization: (consent.marketing === true) ? 'granted' : 'denied',
-    analytics_storage: consent.tracking === true ? 'granted' : 'denied'
+    analytics_storage: consent.tracking === true ? 'granted' : 'denied',
+    functionality_storage: 'granted',
+    personalization_storage: consent.tracking === true ? 'granted' : 'denied',
+    security_storage: 'granted',
   };
+  log('updateConsentState(consentModeStates);',consentModeStates);
   updateConsentState(consentModeStates);
 };
 
@@ -167,19 +167,16 @@ const main = (data) => {
       if (elem === "ad_storage" || elem === "ad_user_data" || elem === "ad_personalization") {
         defaultPreferences.marketing = true;
       }
-      if (elem === "analytics_storage") {
+      if (elem === "analytics_storage" || elem === "personalization_storage") {
         defaultPreferences.tracking = true;
-      }
-      if (elem === "ad_personalization"){
-        defaultPreferences.unknown = true;
       }
     });
     log('creating user consent cookie',JSON.stringify(defaultPreferences));
     localStorage.setItem('acconsento-preferences', JSON.stringify(defaultPreferences));
   }
   
-  /* Event listener to update preferences */
-  callInWindow('preferencesChanged', onUserConsent);
+  /* Event listener to update preferences 
+  callInWindow('preferencesChanged', onUserConsent);*/
   
 };
 main(data);
@@ -189,27 +186,6 @@ data.gtmOnSuccess();
 ___WEB_PERMISSIONS___
 
 [
-  {
-    "instance": {
-      "key": {
-        "publicId": "logging",
-        "versionId": "1"
-      },
-      "param": [
-        {
-          "key": "environments",
-          "value": {
-            "type": 1,
-            "string": "debug"
-          }
-        }
-      ]
-    },
-    "clientAnnotations": {
-      "isEditedByUser": true
-    },
-    "isRequired": true
-  },
   {
     "instance": {
       "key": {
@@ -501,6 +477,24 @@ ___WEB_PERMISSIONS___
     },
     "clientAnnotations": {
       "isEditedByUser": true
+    },
+    "isRequired": true
+  },
+  {
+    "instance": {
+      "key": {
+        "publicId": "logging",
+        "versionId": "1"
+      },
+      "param": [
+        {
+          "key": "environments",
+          "value": {
+            "type": 1,
+            "string": "debug"
+          }
+        }
+      ]
     },
     "isRequired": true
   }
