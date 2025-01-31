@@ -1,5 +1,5 @@
 homepange: "https://shop.acconsento.click"
 documentation: "https://shop.acconsento.click/help"
 versions:
-  - sha: 2db899ed55d0a8f008254af074abcac1ac2b0862
-    changeNotes: added optional conset types
+  - sha: 540d20052109425851405d6b4a12d41523db8270
+    changeNotes: update template
