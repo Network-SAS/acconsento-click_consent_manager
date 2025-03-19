@@ -34,53 +34,241 @@ ___TEMPLATE_PARAMETERS___
 
 [
   {
+    "type": "TEXT",
+    "name": "dataKey",
+    "displayName": "Acconsento data-key",
+    "simpleValueType": true,
+    "valueValidators": [
+      {
+        "type": "NON_EMPTY"
+      }
+    ]
+  },
+  {
+    "type": "CHECKBOX",
+    "name": "consentModeDisabled",
+    "checkboxText": "Disable Google Consent Mode",
+    "simpleValueType": true,
+    "defaultValue": false
+  },
+  {
+    "type": "CHECKBOX",
+    "name": "ads_data_redaction",
+    "checkboxText": "Redact Ads Data",
+    "simpleValueType": true,
+    "defaultValue": false,
+    "help": "Use Ads Data Redaction to anonymize sensitive user data when consent is denied."
+  },
+  {
+    "type": "CHECKBOX",
+    "name": "url_passthrough",
+    "checkboxText": "URL passthrough",
+    "simpleValueType": true,
+    "defaultValue": false,
+    "help": "Use URL Passthrough to retain campaign tracking integrity without relying on cookies or storage."
+  },
+  {
+    "type": "CHECKBOX",
+    "name": "useCustomDefaultPrefs",
+    "checkboxText": "Customize default consent preferences",
+    "simpleValueType": true,
+    "defaultValue": false,
+    "help": "Acconsento follows the EU Cookie Law directives for the default Google consent parameters values therefore all consent parameters are \"denied\" except for \"functionality_storage\" and \"security_storage\""
+  },
+  {
     "type": "PARAM_TABLE",
-    "name": "defaultSettings",
-    "displayName": "Default settings",
+    "name": "customDefaultPrefs",
+    "displayName": "Custom Default settings",
     "paramTableColumns": [
       {
         "param": {
           "type": "TEXT",
-          "name": "granted",
-          "displayName": "Granted Consent Types",
+          "name": "region",
+          "displayName": "Region (leave blank to apply globally)",
+          "simpleValueType": true
+        },
+        "isUnique": true
+      },
+      {
+        "param": {
+          "type": "SELECT",
+          "name": "ad_storage",
+          "displayName": "ad storage",
+          "macrosInSelect": false,
+          "selectItems": [
+            {
+              "value": "denied",
+              "displayValue": "Denied"
+            },
+            {
+              "value": "granted",
+              "displayValue": "Granted"
+            }
+          ],
           "simpleValueType": true,
-          "canBeEmptyString": true,
-          "help": "List of consent types \u003cstrong\u003egranted by default\u003c/strong\u003e comma separated",
-          "defaultValue": "functionality_storage, security_storage"
+          "defaultValue": "denied",
+          "help": "Controls storage related to ads, including cookies for remarketing and conversion tracking like Google Ads cookies"
+        },
+        "isUnique": false
+      },
+      {
+        "param": {
+          "type": "SELECT",
+          "name": "ad_user_data",
+          "displayName": "ad user data",
+          "macrosInSelect": false,
+          "selectItems": [
+            {
+              "value": "denied",
+              "displayValue": "Denied"
+            },
+            {
+              "value": "granted",
+              "displayValue": "Granted"
+            }
+          ],
+          "simpleValueType": true,
+          "defaultValue": "denied",
+          "help": "Regulates user-related data used for advertising purposes, such as cross-device or audience-level data like data used for building audience segments or user profiles"
+        },
+        "isUnique": false
+      },
+      {
+        "param": {
+          "type": "SELECT",
+          "name": "ad_personalization",
+          "displayName": "ad personalization",
+          "macrosInSelect": false,
+          "selectItems": [
+            {
+              "value": "denied",
+              "displayValue": "Denied"
+            },
+            {
+              "value": "granted",
+              "displayValue": "Granted"
+            }
+          ],
+          "simpleValueType": true,
+          "defaultValue": "denied",
+          "help": "Regulates the use of data for personalizing ads like ads tailored to user interests based on their activity"
+        },
+        "isUnique": false
+      },
+      {
+        "param": {
+          "type": "SELECT",
+          "name": "analytics_storage",
+          "displayName": "analytics storage",
+          "macrosInSelect": false,
+          "selectItems": [
+            {
+              "value": "denied",
+              "displayValue": "Denied"
+            },
+            {
+              "value": "granted",
+              "displayValue": "Granted"
+            }
+          ],
+          "simpleValueType": true,
+          "defaultValue": "denied",
+          "help": "Manages storage for analytics cookies used to track website performance and user behavior like Google Analytics cookies that monitor page views, bounce rates, or session duration."
+        },
+        "isUnique": false
+      },
+      {
+        "param": {
+          "type": "SELECT",
+          "name": "functionality_storage",
+          "displayName": "functionality storage",
+          "macrosInSelect": false,
+          "selectItems": [
+            {
+              "value": "denied",
+              "displayValue": "Denied"
+            },
+            {
+              "value": "granted",
+              "displayValue": "Granted"
+            }
+          ],
+          "simpleValueType": true,
+          "defaultValue": "granted",
+          "help": "Controls storage for features that enhance site functionality like data containing language preferences or shopping cart contents"
+        },
+        "isUnique": false
+      },
+      {
+        "param": {
+          "type": "SELECT",
+          "name": "personalization_storage",
+          "displayName": "personalization storage",
+          "macrosInSelect": false,
+          "selectItems": [
+            {
+              "value": "denied",
+              "displayValue": "Denied"
+            },
+            {
+              "value": "granted",
+              "displayValue": "Granted"
+            }
+          ],
+          "simpleValueType": true,
+          "defaultValue": "denied",
+          "help": "Regulates storage used to provide personalized website experiences like customizing website themes or recommending products based on user preferences."
+        },
+        "isUnique": false
+      },
+      {
+        "param": {
+          "type": "SELECT",
+          "name": "security_storage",
+          "displayName": "security storage",
+          "macrosInSelect": false,
+          "selectItems": [
+            {
+              "value": "denied",
+              "displayValue": "Denied"
+            },
+            {
+              "value": "granted",
+              "displayValue": "Granted"
+            }
+          ],
+          "simpleValueType": true,
+          "defaultValue": "granted",
+          "help": "Manages storage for security purposes, such as fraud prevention and protecting user data like cookies for login authentication or security tokens."
         },
         "isUnique": false
       },
       {
         "param": {
           "type": "TEXT",
-          "name": "denied",
-          "displayName": "Denied Consent Types",
+          "name": "wait_for_update",
+          "displayName": "wait_for_update",
           "simpleValueType": true,
-          "defaultValue": "ad_storage, ad_user_data, ad_personalization, analytics_storage, personalization_storage",
-          "canBeEmptyString": false,
-          "help": "List of consent types \u003cstrong\u003edenied by default\u003c/strong\u003e comma separated"
+          "defaultValue": 500
         },
         "isUnique": false
-      },
+      }
+    ],
+    "enablingConditions": [
       {
-        "param": {
-          "type": "CHECKBOX",
-          "name": "ads_data_redaction",
-          "checkboxText": "Redact Ads Data",
-          "simpleValueType": true,
-          "help": "When \u003cstrong\u003eads_data_redaction\u003c/strong\u003e is \u003cstrong\u003etrue\u003c/strong\u003e and \u003cstrong\u003ead_storage\u003c/strong\u003e is \u003cstrong\u003edenied\u003c/strong\u003e, ad click identifiers in network requests by Google Ads and Floodlight tags will be redacted. Network requests will be sent through a cookieless domain."
-        },
-        "isUnique": false
-      },
+        "paramName": "useCustomDefaultPrefs",
+        "paramValue": true,
+        "type": "EQUALS"
+      }
+    ],
+    "help": "Setup custom values for default consent preferences",
+    "valueValidators": [
       {
-        "param": {
-          "type": "CHECKBOX",
-          "name": "url_passthrough",
-          "checkboxText": "Pass through URL parameters",
-          "simpleValueType": true,
-          "help": "If ad information is stored in first-party cookies but \u003cstrong\u003ead_storage\u003c/strong\u003e is \u003cstrong\u003edenied\u003c/strong\u003e, the information won\u0027t be stored locally. To improve ad click measurement quality when \u003cstrong\u003ead_storage\u003c/strong\u003e is \u003cstrong\u003edenied\u003c/strong\u003e, pass ad click information through URL parameters"
-        },
-        "isUnique": false
+        "type": "TABLE_ROW_COUNT",
+        "args": [
+          1,
+          110
+        ]
       }
     ]
   }
@@ -94,103 +282,101 @@ const JSON = require('JSON');
 const setDefaultConsentState = require('setDefaultConsentState');
 const updateConsentState = require('updateConsentState');
 const localStorage = require('localStorage');
+const getCookieValues = require('getCookieValues');
+const callInWindow = require('callInWindow');
 const gtagSet = require('gtagSet');
-const COOKIE_NAME = 'acconsento-preferences';
+const injectScript = require('injectScript');
+const consentModeDisabled = data.consentModeDisabled;
 
-/**
- * Splits a string by commas, trims spaces, and removes empty entries.
- */
-const splitInput = (input) => 
-  input.split(',').map(entry => entry.trim()).filter(entry => entry.length !== 0);
+/* Acconsento variables */
+const IS_FIRST_VISIT = getCookieValues('acconsento-clicked').length === 0;
+const eeaRegions = ["AT", "BE", "BG", "CY", "CZ", "DE", "DK", "EE", "ES", "FI", "FR", "GR",
+    "HR", "HU", "IE", "IT", "IS", "LI", "LT", "LU", "LV", "MT", "NL", "NO", "PL", "PT", "RO", "SE", "SI", "SK"];
 
-/**
- * Parses granted and denied consent states into a command data object.
- */
-const parseCommandData = (settings) => {
-  const commandData = {};
-  splitInput(settings.granted).forEach(entry => commandData[entry] = 'granted');
-  splitInput(settings.denied).forEach(entry => commandData[entry] = 'denied');
-  return commandData;
-};
+let DEFAULT_CONSENT_STATE = {};
+if (data.useCustomDefaultPrefs) {
+    let prefs = data.customDefaultPrefs;
+    prefs.region = prefs.region && prefs.region.length > 0 ? prefs.region.split(',').map(item => item.trim()) : "";
+    DEFAULT_CONSENT_STATE = prefs;
+} else {
+    DEFAULT_CONSENT_STATE = [{
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        analytics_storage: 'denied',
+        functionality_storage: 'granted',
+        personalization_storage: 'granted',
+        security_storage: 'granted',
+        region: eeaRegions,
+        wait_for_update: 500
+    }];
+}
 
-/**
- * Generates consent mode states based on user consent.
- */
+let DEFAULT_PREFERENCES = {};
+if (data.useCustomDefaultPrefs) {
+    DEFAULT_PREFERENCES = {
+        "necessary": true,
+        "tracking": DEFAULT_CONSENT_STATE.analytics_storage === "granted",
+        "marketing": ["ad_storage", "ad_user_data", "ad_personalization"].some(k => DEFAULT_CONSENT_STATE[k] === "granted"),
+        "unknown": ["functionality_storage", "personalization_storage"].some(k => DEFAULT_CONSENT_STATE[k] === "granted")
+    };
+} else {
+    DEFAULT_PREFERENCES = {
+        "necessary": true,
+        "tracking": false,
+        "marketing": false,
+        "unknown": false,
+    };
+}
+
+let userPreferences = localStorage.getItem('acconsento-preferences') ? localStorage.getItem('acconsento-preferences') : DEFAULT_PREFERENCES;
+
+/* Generates consent mode states based on user consent */
 const generateConsentModeStates = (consent) => ({
-  ad_storage: consent.marketing ? 'granted' : 'denied',
-  ad_user_data: consent.marketing ? 'granted' : 'denied',
-  ad_personalization: consent.marketing ? 'granted' : 'denied',
-  analytics_storage: consent.tracking ? 'granted' : 'denied',
-  functionality_storage: 'granted',
-  personalization_storage: consent.tracking ? 'granted' : 'denied',
-  security_storage: 'granted',
+    ad_storage: consent.marketing ? 'granted' : 'denied',
+    ad_user_data: consent.marketing ? 'granted' : 'denied',
+    ad_personalization: consent.marketing ? 'granted' : 'denied',
+    analytics_storage: consent.tracking ? 'granted' : 'denied',
+    functionality_storage: 'granted',
+    personalization_storage: 'granted',
+    security_storage: 'granted',
 });
 
-/**
- * Updates consent state based on user preferences.
- */
 const onUserConsent = (consent) => {
-  const consentModeStates = generateConsentModeStates(consent);
-  updateConsentState(consentModeStates);
-};
-
-/**
- * Main function for handling consent initialization and updates.
- */
-const main = (data) => {
-  let settings = JSON.parse(localStorage.getItem(COOKIE_NAME));
-  let isFirstUpdate = true;
-
-  // Set optional settings with gtagSet
-  gtagSet({
-    'developer_id.dZTJkMz': true,
-    ads_data_redaction: data.defaultSettings[0].ads_data_redaction,
-    url_passthrough: data.defaultSettings[0].url_passthrough,
-  });
-
-  if (settings && isFirstUpdate) {
-    log('User preferences found:', settings);
-    const usrPrefs = generateConsentModeStates(settings);
-    usrPrefs.wait_for_update = 500;
-    setDefaultConsentState(usrPrefs);
-    isFirstUpdate = false;
-  } else {
-    log('No user preferences found.');
-    data.defaultSettings.forEach((defaultSetting) => {
-      const defaultData = parseCommandData(defaultSetting);
-      defaultData.wait_for_update = 500;
-      setDefaultConsentState(defaultData);
-      log('Applying default consent state');
-    });
-  }
-
-  if (settings && !isFirstUpdate) {
-    log('Existing consent cookie found:', settings);
-    onUserConsent(settings);
-  } else {
-    log('No consent cookie found');
-    const defaultPreferences = {
-      necessary: true,
-      tracking: false,
-      marketing: false,
-      unknown: false,
+    const consentModeStates = {
+        ad_storage: consent.marketing === true ? 'granted' : 'denied',
+        ad_user_data: consent.marketing === true ? 'granted' : 'denied',
+        ad_personalization: consent.marketing === true ? 'granted' : 'denied',
+        analytics_storage: consent.tracking === true ? 'granted' : 'denied',
+        functionality_storage: consent.unknown === true ? 'granted' : 'denied',
+        personalization_storage: consent.unknown === true ? 'granted' : 'denied',
+        security_storage: 'granted',
     };
-
-    splitInput(data.defaultSettings[0].granted).forEach((entry) => {
-      if (entry === "ad_storage" || entry === "ad_user_data" || entry === "ad_personalization") {
-        defaultPreferences.marketing = true;
-      }
-      if (entry === "analytics_storage" || entry === "personalization_storage") {
-        defaultPreferences.tracking = true;
-      }
-    });
-
-    log('Creating consent cookie:', JSON.stringify(defaultPreferences));
-    localStorage.setItem(COOKIE_NAME, JSON.stringify(defaultPreferences));
-  }
+    log('updateConsentState(consentModeStates);', consentModeStates);
+    updateConsentState(consentModeStates);
 };
 
-// Run the main function
+const main = (data) => {
+    log(data);
+    if (!data.consentModeDisabled) {
+        if (IS_FIRST_VISIT) {
+            DEFAULT_CONSENT_STATE.forEach(elem => {
+                setDefaultConsentState(elem);
+            });
+        } else {
+            onUserConsent(userPreferences);
+        }
+
+        /* Optional settings using gtagSet */
+        gtagSet({
+            'developer_id.dZTJkMz': true,
+            ads_data_redaction: data.ads_data_redaction,
+            url_passthrough: data.url_passthrough
+        });
+      injectScript('https://acconsento.click/beta.js?data-key='+data.dataKey+"&consentModeDisabled="+data.consentModeDisabled);
+    }
+};
+
 main(data);
 data.gtmOnSuccess();
 
@@ -198,6 +384,67 @@ data.gtmOnSuccess();
 ___WEB_PERMISSIONS___
 
 [
+  {
+    "instance": {
+      "key": {
+        "publicId": "access_globals",
+        "versionId": "1"
+      },
+      "param": [
+        {
+          "key": "keys",
+          "value": {
+            "type": 2,
+            "listItem": [
+              {
+                "type": 3,
+                "mapKey": [
+                  {
+                    "type": 1,
+                    "string": "key"
+                  },
+                  {
+                    "type": 1,
+                    "string": "read"
+                  },
+                  {
+                    "type": 1,
+                    "string": "write"
+                  },
+                  {
+                    "type": 1,
+                    "string": "execute"
+                  }
+                ],
+                "mapValue": [
+                  {
+                    "type": 1,
+                    "string": "preferencesChanged"
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "clientAnnotations": {
+      "isEditedByUser": true
+    },
+    "isRequired": true
+  },
   {
     "instance": {
       "key": {
@@ -536,6 +783,69 @@ ___WEB_PERMISSIONS___
           "value": {
             "type": 1,
             "string": "debug"
+          }
+        }
+      ]
+    },
+    "clientAnnotations": {
+      "isEditedByUser": true
+    },
+    "isRequired": true
+  },
+  {
+    "instance": {
+      "key": {
+        "publicId": "inject_script",
+        "versionId": "1"
+      },
+      "param": [
+        {
+          "key": "urls",
+          "value": {
+            "type": 2,
+            "listItem": [
+              {
+                "type": 1,
+                "string": "https://*.acconsento.click/script-gtm.js?*"
+              },
+              {
+                "type": 1,
+                "string": "https://*.acconsento.click/beta.js?*"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "clientAnnotations": {
+      "isEditedByUser": true
+    },
+    "isRequired": true
+  },
+  {
+    "instance": {
+      "key": {
+        "publicId": "get_cookies",
+        "versionId": "1"
+      },
+      "param": [
+        {
+          "key": "cookieAccess",
+          "value": {
+            "type": 1,
+            "string": "specific"
+          }
+        },
+        {
+          "key": "cookieNames",
+          "value": {
+            "type": 2,
+            "listItem": [
+              {
+                "type": 1,
+                "string": "acconsento-clicked"
+              }
+            ]
           }
         }
       ]
