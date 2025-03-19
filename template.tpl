@@ -5,6 +5,7 @@ Template Gallery Developer Terms of Service available at
 https://developers.google.com/tag-manager/gallery-tos (or such other URL as
 Google may provide), as modified from time to time.
 
+
 ___INFO___
 
 {
@@ -373,7 +374,7 @@ const main = (data) => {
             ads_data_redaction: data.ads_data_redaction,
             url_passthrough: data.url_passthrough
         });
-      injectScript('https://acconsento.click/beta.js?data-key='+data.dataKey+"&consentModeDisabled="+data.consentModeDisabled);
+      injectScript('https://acconsento.click/script-gtm.js?data-key='+data.dataKey+"&consentModeDisabled="+data.consentModeDisabled);
     }
 };
 
@@ -866,3 +867,5 @@ scenarios: []
 ___NOTES___
 
 Created on 5/31/2024, 1:36:06 AM
+
+
