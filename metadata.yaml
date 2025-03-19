@@ -1,5 +1,5 @@
 homepange: "https://shop.acconsento.click"
 documentation: "https://shop.acconsento.click/help"
 versions:
-  - sha: c34dd8f34c63654c7a80044ab3dea5b6877f1e23
-    changeNotes: Custom HTML tag now Obsolete added custom default settings for regions added disable Google Consent Mode for consent debug
+  - sha: f947ccc0acdf90dd0c50eeaabe4b294c050bba10
+    changeNotes: fix inject
