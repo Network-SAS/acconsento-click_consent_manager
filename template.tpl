@@ -330,7 +330,7 @@ if (data.useCustomDefaultPrefs) {
     };
 }
 
-let userPreferences = localStorage.getItem('acconsento-preferences') ? localStorage.getItem('acconsento-preferences') : DEFAULT_PREFERENCES;
+let userPreferences = localStorage.getItem('acconsento-preferences') ? JSON.parse(localStorage.getItem('acconsento-preferences')) : DEFAULT_PREFERENCES;
 
 /* Generates consent mode states based on user consent */
 const generateConsentModeStates = (consent) => ({
@@ -349,7 +349,7 @@ const onUserConsent = (consent) => {
         ad_user_data: consent.marketing === true ? 'granted' : 'denied',
         ad_personalization: consent.marketing === true ? 'granted' : 'denied',
         analytics_storage: consent.tracking === true ? 'granted' : 'denied',
-        functionality_storage: consent.unknown === true ? 'granted' : 'denied',
+        functionality_storage: 'granted',
         personalization_storage: consent.unknown === true ? 'granted' : 'denied',
         security_storage: 'granted',
     };
