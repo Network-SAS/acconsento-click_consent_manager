@@ -1,5 +1,5 @@
 homepange: "https://shop.acconsento.click"
 documentation: "https://shop.acconsento.click/help"
 versions:
-  - sha: f947ccc0acdf90dd0c50eeaabe4b294c050bba10
-    changeNotes: fix inject
+  - sha: f6eadbb8c53e2a8af1e2b53c9b430cbf33cf98e2
+    changeNotes: fixed user preferences retrieval
