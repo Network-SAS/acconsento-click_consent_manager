@@ -301,14 +301,14 @@ if (data.useCustomDefaultPrefs) {
     DEFAULT_CONSENT_STATE = prefs;
 } else {
     DEFAULT_CONSENT_STATE = [{
+        region: eeaRegions,
         ad_storage: 'denied',
         ad_user_data: 'denied',
         ad_personalization: 'denied',
         analytics_storage: 'denied',
         functionality_storage: 'granted',
-        personalization_storage: 'granted',
+        personalization_storage: 'denied',
         security_storage: 'granted',
-        region: eeaRegions,
         wait_for_update: 500
     }];
 }
@@ -319,7 +319,7 @@ if (data.useCustomDefaultPrefs) {
         "necessary": true,
         "tracking": DEFAULT_CONSENT_STATE.analytics_storage === "granted",
         "marketing": ["ad_storage", "ad_user_data", "ad_personalization"].some(k => DEFAULT_CONSENT_STATE[k] === "granted"),
-        "unknown": ["functionality_storage", "personalization_storage"].some(k => DEFAULT_CONSENT_STATE[k] === "granted")
+        "unknown": ["personalization_storage"].some(k => DEFAULT_CONSENT_STATE[k] === "granted")
     };
 } else {
     DEFAULT_PREFERENCES = {
@@ -331,17 +331,6 @@ if (data.useCustomDefaultPrefs) {
 }
 
 let userPreferences = localStorage.getItem('acconsento-preferences') ? JSON.parse(localStorage.getItem('acconsento-preferences')) : DEFAULT_PREFERENCES;
-
-/* Generates consent mode states based on user consent */
-const generateConsentModeStates = (consent) => ({
-    ad_storage: consent.marketing ? 'granted' : 'denied',
-    ad_user_data: consent.marketing ? 'granted' : 'denied',
-    ad_personalization: consent.marketing ? 'granted' : 'denied',
-    analytics_storage: consent.tracking ? 'granted' : 'denied',
-    functionality_storage: 'granted',
-    personalization_storage: 'granted',
-    security_storage: 'granted',
-});
 
 const onUserConsent = (consent) => {
     const consentModeStates = {
