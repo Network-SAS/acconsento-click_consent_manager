@@ -1,5 +1,5 @@
 homepange: "https://shop.acconsento.click"
 documentation: "https://shop.acconsento.click/help"
 versions:
-  - sha: 20def0ce06cacdb792d3248d942f78a62e5ae280
-    changeNotes: optimized code
+  - sha: 8e451bf4ab5aebee78a09e592d3922d853f91645
+    changeNotes: CMP compliance edits
