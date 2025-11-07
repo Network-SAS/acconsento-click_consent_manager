@@ -275,17 +275,45 @@ const log = require('logToConsole');
 const JSON = require('JSON');
 const setDefaultConsentState = require('setDefaultConsentState');
 const localStorage = require('localStorage');
-const getCookieValues = require('getCookieValues');
 const gtagSet = require('gtagSet');
 const injectScript = require('injectScript');
 
-const IS_FIRST_VISIT = getCookieValues('acconsento-clicked').length === 0;
-//const eeaRegions = ["AT", "BE", "BG", "CY", "CZ", "DE", "DK", "EE", "ES", "FI", "FR", "GR","HR", "HU", "IE", "IT", "IS", "LI", "LT", "LU", "LV", "MT", "NL", "NO", "PL", "PT", "RO", "SE", "SI", "SK"];
+// --- Helper function: Convert user preferences to consent state ---
+function convertPreferencesToConsentState(prefs) {
+	return {
+		ad_storage: (prefs.marketing === true) ? 'granted' : 'denied',
+		ad_user_data: (prefs.marketing === true) ? 'granted' : 'denied',
+		ad_personalization: (prefs.marketing === true) ? 'granted' : 'denied',
+		analytics_storage: (prefs.tracking === true) ? 'granted' : 'denied',
+		functionality_storage: (prefs.necessary === true) ? 'granted' : 'denied',
+		personalization_storage: (prefs.unknown === true) ? 'granted' : 'denied',
+		security_storage: (prefs.necessary === true) ? 'granted' : 'denied'
+	};
+}
+
+// --- Read saved user preferences from localStorage ---
+var stored = localStorage.getItem('acconsento-preferences');
+var userPreferences = null;
+if (stored) {
+	if ((stored.indexOf('{') === 0 || stored.indexOf('[') === 0) && stored.indexOf('}') > 0) {
+		var parsed = JSON.parse(stored);
+		if (parsed && typeof parsed === 'object' && parsed !== null) {
+			userPreferences = parsed;
+		}
+	}
+}
 
 // --- Default Consent State ---
 let DEFAULT_CONSENT_STATE = [];
-if (data.useCustomDefaultPrefs && data.customDefaultPrefs) {
-	// Check if Array
+
+if (userPreferences && typeof userPreferences === 'object') {
+	// Use saved user preferences converted to consent state
+	var consentState = convertPreferencesToConsentState(userPreferences);
+	consentState.wait_for_update = 500;
+	DEFAULT_CONSENT_STATE = [consentState];
+	log('Using saved user preferences for DEFAULT_CONSENT_STATE');
+} else if (data.useCustomDefaultPrefs && data.customDefaultPrefs) {
+	// Use custom default preferences if configured
 	if (data.customDefaultPrefs && typeof data.customDefaultPrefs === 'object' && typeof data.customDefaultPrefs.length === 'number') {
 		DEFAULT_CONSENT_STATE = [];
 		for (var i = 0; i < data.customDefaultPrefs.length; i++) {
@@ -315,6 +343,7 @@ if (data.useCustomDefaultPrefs && data.customDefaultPrefs) {
 		}];
 	}
 } else {
+	// Fallback: hardcoded default values
 	DEFAULT_CONSENT_STATE = [{
 		ad_storage: 'denied',
 		ad_user_data: 'denied',
@@ -327,48 +356,18 @@ if (data.useCustomDefaultPrefs && data.customDefaultPrefs) {
 	}];
 }
 
-// --- Default Preferences ---
-let DEFAULT_PREFERENCES = {
-	necessary: true,
-	tracking: false,
-	marketing: false,
-	unknown: false
-};
-
-if (data.useCustomDefaultPrefs && DEFAULT_CONSENT_STATE.length > 0) {
-	var first = DEFAULT_CONSENT_STATE[0];
-	DEFAULT_PREFERENCES = {
-		necessary: true,
-		tracking: first.analytics_storage === 'granted',
-		marketing: ['ad_storage', 'ad_user_data', 'ad_personalization'].some(function (k) { return first[k] === 'granted'; }),
-		unknown: ['personalization_storage'].some(function (k) { return first[k] === 'granted'; })
-	};
-}
-
-// --- User Preferences ---
-let userPreferences = DEFAULT_PREFERENCES;
-var stored = localStorage.getItem('acconsento-preferences');
-if (stored) {
-	if ((stored.indexOf('{') === 0 || stored.indexOf('[') === 0) && stored.indexOf('}') > 0) {
-		userPreferences = JSON.parse(stored);
-		if (typeof userPreferences !== 'object' || userPreferences === null) {
-			userPreferences = DEFAULT_PREFERENCES;
-		}
-	}
-}
-
 // --- Main function ---
 const main = function (data) {
 	log('GTM Acconsento Consent Mode - data:', data);
-	if (IS_FIRST_VISIT) {
-		// Set default consent state for each configuration
-		DEFAULT_CONSENT_STATE.forEach(function (elem) {
-			log('DEFAULT CONSENT SET:', elem);
-			setDefaultConsentState(elem);
-		});
-	}
 	
-	// Advanced options via gtagSet
+	// setDefaultConsentState
+	DEFAULT_CONSENT_STATE.forEach(function (elem) {
+		log('DEFAULT CONSENT SET:', elem);
+		setDefaultConsentState(elem);
+	});
+	// updateConsentState() is managed by the external script (script-gtm.js)
+  
+	// Advanced options
 	gtagSet({
 		'developer_id.dZTJkMz': true,
 		ads_data_redaction: !!data.ads_data_redaction,
@@ -763,39 +762,6 @@ ___WEB_PERMISSIONS___
               {
                 "type": 1,
                 "string": "https://*.acconsento.click/beta.js?*"
-              }
-            ]
-          }
-        }
-      ]
-    },
-    "clientAnnotations": {
-      "isEditedByUser": true
-    },
-    "isRequired": true
-  },
-  {
-    "instance": {
-      "key": {
-        "publicId": "get_cookies",
-        "versionId": "1"
-      },
-      "param": [
-        {
-          "key": "cookieAccess",
-          "value": {
-            "type": 1,
-            "string": "specific"
-          }
-        },
-        {
-          "key": "cookieNames",
-          "value": {
-            "type": 2,
-            "listItem": [
-              {
-                "type": 1,
-                "string": "acconsento-clicked"
               }
             ]
           }
