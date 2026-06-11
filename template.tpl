@@ -274,6 +274,7 @@ ___SANDBOXED_JS_FOR_WEB_TEMPLATE___
 const log = require('logToConsole');
 const JSON = require('JSON');
 const setDefaultConsentState = require('setDefaultConsentState');
+const updateConsentState = require('updateConsentState');
 const localStorage = require('localStorage');
 const gtagSet = require('gtagSet');
 const injectScript = require('injectScript');
@@ -339,7 +340,7 @@ if (userPreferences && typeof userPreferences === 'object') {
 			functionality_storage: 'granted',
 			personalization_storage: 'denied',
 			security_storage: 'granted',
-			wait_for_update: 500
+			wait_for_update: 2000
 		}];
 	}
 } else {
@@ -352,7 +353,7 @@ if (userPreferences && typeof userPreferences === 'object') {
 		functionality_storage: 'granted',
 		personalization_storage: 'denied',
 		security_storage: 'granted',
-		wait_for_update: 500
+		wait_for_update: 2000
 	}];
 }
 
@@ -365,8 +366,16 @@ const main = function (data) {
 		log('DEFAULT CONSENT SET:', elem);
 		setDefaultConsentState(elem);
 	});
-	// updateConsentState() is managed by the external script (script-gtm.js)
-  
+
+	// For returning users, preferences are already known from localStorage:
+	// call updateConsentState immediately so GA4 sees the correct state
+	// without waiting for script-gtm.js to complete its API calls.
+	if (userPreferences && typeof userPreferences === 'object') {
+		var immediateUpdate = convertPreferencesToConsentState(userPreferences);
+		log('Applying immediate consent update from saved preferences:', immediateUpdate);
+		updateConsentState(immediateUpdate);
+	}
+
 	// Advanced options
 	gtagSet({
 		'developer_id.dZTJkMz': true,
