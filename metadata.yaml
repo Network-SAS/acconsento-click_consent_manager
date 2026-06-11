@@ -1,5 +1,5 @@
 homepange: "https://shop.acconsento.click"
 documentation: "https://shop.acconsento.click/help"
 versions:
-  - sha: 011ccddc38ecfed22384b6aa7f7a903a60a9f764
-    changeNotes: Aligns with Google Consent Mode v2 best practices
+  - sha: 57709a192664bf1456c15bd821b8bc70e370ad36
+    changeNotes: fix consent update timing for returning users
