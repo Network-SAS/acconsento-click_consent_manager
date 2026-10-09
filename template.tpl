@@ -276,6 +276,7 @@ const JSON = require('JSON');
 const setDefaultConsentState = require('setDefaultConsentState');
 const updateConsentState = require('updateConsentState');
 const localStorage = require('localStorage');
+const getCookieValues = require('getCookieValues');
 const gtagSet = require('gtagSet');
 const injectScript = require('injectScript');
 
@@ -304,10 +305,20 @@ if (stored) {
 	}
 }
 
+// Le preferenze scritte alla creazione del viewer sono tutte negate, ma non sono una scelta.
+// Senza il cookie acconsento-clicked si usano i default (anche per regione), altrimenti un deny
+// globale copre il granted fuori dal SEE.
+function visitorHasChosenConsent() {
+	var values = getCookieValues('acconsento-clicked');
+	return values && values.indexOf('1') !== -1;
+}
+
+var visitorHasChosen = visitorHasChosenConsent();
+
 // --- Default Consent State ---
 let DEFAULT_CONSENT_STATE = [];
 
-if (userPreferences && typeof userPreferences === 'object') {
+if (visitorHasChosen && userPreferences && typeof userPreferences === 'object') {
 	// Use saved user preferences converted to consent state
 	var consentState = convertPreferencesToConsentState(userPreferences);
 	consentState.wait_for_update = 500;
@@ -370,7 +381,7 @@ const main = function (data) {
 	// For returning users, preferences are already known from localStorage:
 	// call updateConsentState immediately so GA4 sees the correct state
 	// without waiting for script-gtm.js to complete its API calls.
-	if (userPreferences && typeof userPreferences === 'object') {
+	if (visitorHasChosen && userPreferences && typeof userPreferences === 'object') {
 		var immediateUpdate = convertPreferencesToConsentState(userPreferences);
 		log('Applying immediate consent update from saved preferences:', immediateUpdate);
 		updateConsentState(immediateUpdate);
@@ -771,6 +782,39 @@ ___WEB_PERMISSIONS___
               {
                 "type": 1,
                 "string": "https://*.acconsento.click/beta.js?*"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "clientAnnotations": {
+      "isEditedByUser": true
+    },
+    "isRequired": true
+  },
+  {
+    "instance": {
+      "key": {
+        "publicId": "get_cookies",
+        "versionId": "1"
+      },
+      "param": [
+        {
+          "key": "cookieAccess",
+          "value": {
+            "type": 1,
+            "string": "specific"
+          }
+        },
+        {
+          "key": "cookieNames",
+          "value": {
+            "type": 2,
+            "listItem": [
+              {
+                "type": 1,
+                "string": "acconsento-clicked"
               }
             ]
           }
